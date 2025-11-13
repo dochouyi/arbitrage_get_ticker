@@ -1,0 +1,11 @@
+use_proxy: true
+proxy_host: "127.0.0.1"
+proxy_port: 7891
+proxy_port_http: 7890
+
+redis_host: "127.0.0.1"
+redis_port: 6379
+redis_db: 0
+
+debug: true
+timeout: 10

@@ -1,0 +1,12 @@
+services:
+
+
+  bitget_ticker:
+    image: exchange_data_collector:latest
+    network_mode: host
+    volumes:
+      - .:/app
+    restart: on-failure
+    command: python -m bitget.ticker
+
+
