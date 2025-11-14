@@ -16,10 +16,10 @@ class RedisDockerMonitor:
 
         sub_cmds=[]
         if self.last_exchange_a!=None:
-            cmd= ["docker", "compose", "-f", f"docker_compose_ticker_{self.last_exchange_a}.yml", "down"]
+            cmd= ["docker", "compose", "-f", f"docker_compose_ticker_{self.last_exchange_a}.yml", "stop"]
             sub_cmds.append(cmd)
         if self.last_exchange_b != None:
-            cmd = ["docker", "compose", "-f", f"docker_compose_ticker_{self.last_exchange_b}.yml", "down"]
+            cmd = ["docker", "compose", "-f", f"docker_compose_ticker_{self.last_exchange_b}.yml", "stop"]
             sub_cmds.append(cmd)
 
 
@@ -30,8 +30,8 @@ class RedisDockerMonitor:
             except subprocess.CalledProcessError as e:
                 print(f"执行失败：{cmd}，错误：{e}")
 
-        cmd1=["docker", "compose", "-f", f"docker_compose_ticker_{exchange_a}.yml", "up", "-d"]
-        cmd2=["docker", "compose", "-f", f"docker_compose_ticker_{exchange_b}.yml", "up", "-d"]
+        cmd1=["docker", "compose", "-f", f"docker_compose_ticker_{exchange_a}.yml", "start"]
+        cmd2=["docker", "compose", "-f", f"docker_compose_ticker_{exchange_b}.yml", "start"]
 
         sub_cmds=[cmd1,cmd2]
         for cmd in sub_cmds:
@@ -41,10 +41,14 @@ class RedisDockerMonitor:
                 print(f"执行失败：{cmd}，错误：{e}")
     def stop_all_containers(self):
         cmds=[
-            ["docker", "compose", "-f", f"docker_compose_ticker_binance.yml", "down"],
-            ["docker", "compose", "-f", f"docker_compose_ticker_bitget.yml", "down"],
-            ["docker", "compose", "-f", f"docker_compose_ticker_bybit.yml", "down"],
-            ["docker", "compose", "-f", f"docker_compose_ticker_okx.yml", "down"]
+            ["docker", "compose", "-f", f"docker_compose_ticker_binance.yml", "up","-d"],
+            ["docker", "compose", "-f", f"docker_compose_ticker_bitget.yml", "up","-d"],
+            ["docker", "compose", "-f", f"docker_compose_ticker_bybit.yml", "up","-d"],
+            ["docker", "compose", "-f", f"docker_compose_ticker_okx.yml", "up","-d"],
+            ["docker", "compose", "-f", f"docker_compose_ticker_binance.yml", "stop"],
+            ["docker", "compose", "-f", f"docker_compose_ticker_bitget.yml", "stop"],
+            ["docker", "compose", "-f", f"docker_compose_ticker_bybit.yml", "stop"],
+            ["docker", "compose", "-f", f"docker_compose_ticker_okx.yml", "stop"]
         ]
         for cmd in cmds:
             try:

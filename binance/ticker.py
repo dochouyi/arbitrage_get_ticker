@@ -61,14 +61,17 @@ def run_ws(symbols, use_proxy=False, proxy_host=None, proxy_port=None, proxy_typ
     else:
         ws.run_forever()
 
+
 if __name__ == "__main__":
 
     symbols = load_symbols_from_yaml("symbols_list.yml")
+
     config = read_config('config.yml')
 
     logger = setup_logger('binance_ticker')
     rds = redis.Redis(host=config['redis_host'], port=config['redis_port'], db=config['redis_db'])
     debug = config['debug']
+
 
     while True:
         try:

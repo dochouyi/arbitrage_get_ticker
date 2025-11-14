@@ -271,5 +271,5 @@ class RedisTickerListener:
 
 
 if __name__ == "__main__":
-    listener = RedisTickerListener(exchange_1="binance", exchange_2="okx", symbol="BTCUSDT")
+    listener = RedisTickerListener(exchange_1="binance", exchange_2="bitget", symbol="BTCUSDT")
     listener.run_forever()
