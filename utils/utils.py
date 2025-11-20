@@ -50,7 +50,7 @@ def read_config(config_path):
 
 def convert_symbol(symbol):
     """
-    将币对名称从 binance 格式转为 okx 格式
+    将币对名称从 ticker 格式转为 okx 格式
     例如 btcusdt -> BTC-USDT-SWAP
     """
     base = symbol[:-4].upper()

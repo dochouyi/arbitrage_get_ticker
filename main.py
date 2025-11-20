@@ -11,6 +11,7 @@ import matplotlib
 matplotlib.use('tkagg')  # 可改为 'qt5agg' 或 'agg'（无界面）
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+from utils.data_queue import PriceQueue
 
 
 class DualOscilloscopePlotter:
@@ -161,6 +162,7 @@ class RedisTickerListener:
 
         # 用于计算的上一时刻值
         self.prev_output = {ch: None for ch in self.channels}
+        self.price_queue=PriceQueue()
 
     def publish_command(self, exchange_a, exchange_b, symbol):
         self.redis.set('exchange_a', exchange_a)
@@ -183,25 +185,17 @@ class RedisTickerListener:
                     if ch in channel:
                         try:
                             payload = message['data']
-                            if isinstance(payload, bytes):
-                                payload = payload.decode('utf-8')
+                            payload = payload.decode('utf-8')
                             data_json = json.loads(payload)
-                            # 兼容多种字段名
-                            if isinstance(data_json, dict):
-                                if 'last_price' in data_json:
-                                    data = float(data_json['last_price'])
-                                elif 'price' in data_json:
-                                    data = float(data_json['price'])
-                                elif 'last' in data_json:
-                                    data = float(data_json['last'])
-                                else:
-                                    continue
-                            else:
-                                continue
+
+                            data = float(data_json['last_price'])
+
                             with self.lock:
                                 self.latest_data[ch] = data
                         except Exception as e:
                             print(f"[listen_redis] 解析消息异常: {e}")
+
+
 
     def print_and_plot_latest(self):
         """
@@ -218,18 +212,20 @@ class RedisTickerListener:
                     output[ch] = self.latest_data.get(ch, self.prev_output[ch])
                 self.latest_data.clear()
 
-            print(output)
+            # print(output)
             self.prev_output = output.copy()
 
             a = output.get(ch_a)
             b = output.get(ch_b)
+
+            decision=self.price_queue.put_prices(a,b)
+            if decision!=(None,None):
+                print(decision,a,b)
+
             if isinstance(a, (int, float)) and isinstance(b, (int, float)) and a is not None and b is not None:
                 spread = a - b
                 self.plotter.add_point_top(spread)
 
-                # 百分比（默认相对 B）。如需改为相对 mid，请参见注释。
-                # mid = (a + b) / 2.0
-                # spread_pct = (a - b) / mid * 100.0 if mid != 0 else 0.0
                 if b != 0:
                     spread_pct = (a - b) / b * 100.0
                 else:
@@ -271,5 +267,5 @@ class RedisTickerListener:
 
 
 if __name__ == "__main__":
-    listener = RedisTickerListener(exchange_1="bybit", exchange_2="bitget", symbol="TNSRUSDT")
+    listener = RedisTickerListener(exchange_1="binance", exchange_2="bybit", symbol="GRASSUSDT")
     listener.run_forever()

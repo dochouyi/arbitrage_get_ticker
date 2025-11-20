@@ -1,0 +1,40 @@
+services:
+  binance_ticker:
+    image: exchange_data_collector:latest
+    network_mode: host
+    volumes:
+      - .:/app
+    restart: "no"
+    command: python -m ticker.ticker_binance
+
+  bybit_ticker:
+    image: exchange_data_collector:latest
+    network_mode: host
+    volumes:
+      - .:/app
+    restart: "no"
+    command: python -m ticker.ticker_bybit
+
+
+  bitget_ticker:
+    image: exchange_data_collector:latest
+    network_mode: host
+    volumes:
+      - .:/app
+    restart: "no"
+    command: python -m ticker.ticker_bitget
+
+
+  okx_ticker:
+    image: exchange_data_collector:latest
+    network_mode: host
+    volumes:
+      - .:/app
+    restart: "no"
+    command: python -m ticker.ticker_okx
+
+
+# docker compose up
+# docker compose up -d
+# docker compose down
+
