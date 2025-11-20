@@ -1,6 +1,7 @@
 import collections
 import numpy as np
 
+
 class PriceQueue:
     def __init__(self, maxlen=100):
         self.queue = collections.deque(maxlen=maxlen)

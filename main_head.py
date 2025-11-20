@@ -195,8 +195,6 @@ class RedisTickerListener:
                         except Exception as e:
                             print(f"[listen_redis] 解析消息异常: {e}")
 
-
-
     def print_and_plot_latest(self):
         """
         每秒打印一次两个通道的最新值，并更新同一图中的两条曲线。
@@ -218,11 +216,12 @@ class RedisTickerListener:
             a = output.get(ch_a)
             b = output.get(ch_b)
 
-            decision=self.price_queue.put_prices(a,b)
-            if decision!=(None,None):
-                print(decision,a,b)
-
             if isinstance(a, (int, float)) and isinstance(b, (int, float)) and a is not None and b is not None:
+
+                decision = self.price_queue.put_prices(a, b)
+                if decision != (None, None):
+                    print(f"Decision: {decision}, a: {a}, b: {b}")
+
                 spread = a - b
                 self.plotter.add_point_top(spread)
 
@@ -267,5 +266,5 @@ class RedisTickerListener:
 
 
 if __name__ == "__main__":
-    listener = RedisTickerListener(exchange_1="binance", exchange_2="bybit", symbol="GRASSUSDT")
+    listener = RedisTickerListener(exchange_1="binance", exchange_2="bybit", symbol="COAIUSDT")
     listener.run_forever()
